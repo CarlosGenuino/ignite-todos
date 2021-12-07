@@ -73,7 +73,9 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const {title, deadline} = request.body
   const {id} = request.params
   const todo = getTodoById(customer.todos, id)
-  console.log(todo)
+  if(!todo){
+    return response.status(404).json({error: 'Invalid TODO Id'})
+  }
   todo.title = title
   todo.deadline = new Date(deadline)
   response.json(todo)
@@ -84,9 +86,12 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   const {id} = request.params
   const { customer } = request
   const todo = getTodoById(customer.todos, id)
+  if(!todo){
+    return response.status(404).json({error: 'Invalid TODO Id'})
+  }
   todo.done = true
   console.log(customer.todos);
-  response.json({todo})
+  response.json(todo)
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
@@ -94,14 +99,14 @@ app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   const {id} = request.params
   const { customer } = request
   const todo = getTodoById(customer.todos, id)
+  if(!todo){
+    return response.status(404).json({error: 'Invalid TODO Id'})
+  }
   customer.todos.splice(todo, 1)
-  response.json(customer.todos)
+  response.status(204).json(customer.todos)
 });
 
 function getTodoById(todos, id){
-  console.log(id);
-  console.log(todos);
-
   return todos.find(t => t.id == id)
 }
 
